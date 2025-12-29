@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lembar Kerja Kalibrasi Thermohygrometer</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    @media print {
+      button {
+        display: none;
+      }
+      body {
+        background: white;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 p-6">
+  <div class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow">
+
+    <!-- HEADER -->
+    <h1 class="text-2xl font-bold text-center mb-6">
+      Lembar Kerja Kalibrasi Thermohygrometer
+    </h1>
+
+    <!-- INFORMASI UMUM -->
+    <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+      <div>
+        <label class="font-semibold">Nama Alat:</label>
+        <input type="text" class="w-full border rounded p-2 mt-1">
+      </div>
+      <div>
+        <label class="font-semibold">Nomor Seri:</label>
+        <input type="text" class="w-full border rounded p-2 mt-1">
+      </div>
+      <div>
+        <label class="font-semibold">Tanggal Kalibrasi:</label>
+        <input type="date" class="w-full border rounded p-2 mt-1">
+      </div>
+      <div>
+        <label class="font-semibold">Petugas:</label>
+        <input type="text" class="w-full border rounded p-2 mt-1">
+      </div>
+    </div>
+
+    <!-- TABEL -->
+    <div class="overflow-x-auto">
+      <table class="w-full border border-gray-300 text-sm">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="border p-2">No</th>
+            <th class="border p-2">Nilai Standar</th>
+            <th class="border p-2">Nilai Pembacaan</th>
+            <th class="border p-2">Deviasi</th>
+            <th class="border p-2">Toleransi</th>
+            <th class="border p-2">Keputusan</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <script>
+            for (let i = 1; i <= 5; i++) {
+              document.write(`
+                <tr>
+                  <td class="border p-2 text-center">${i}</td>
+
+                  <td class="border p-2">
+                    <input type="number" step="0.01" 
+                      class="standar w-full border p-1" 
+                      oninput="hitung(this)">
+                  </td>
+
+                  <td class="border p-2">
+                    <input type="number" step="0.01" 
+                      class="pembacaan w-full border p-1" 
+                      oninput="hitung(this)">
+                  </td>
+
+                  <td class="border p-2">
+                    <input type="text" 
+                      class="deviasi w-full border p-1 bg-gray-100" readonly>
+                  </td>
+
+                  <td class="border p-2">
+                    <input type="number" step="0.01" 
+                      class="toleransi w-full border p-1" 
+                      oninput="hitung(this)">
+                  </td>
+
+                  <td class="border p-2 text-center">
+                    <span class="keputusan font-semibold"></span>
+                  </td>
+                </tr>
+              `);
+            }
+          </script>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CATATAN -->
+    <div class="mt-4">
+      <label class="font-semibold">Catatan:</label>
+      <textarea class="w-full border rounded p-2 mt-1" rows="3"></textarea>
+    </div>
+
+    <!-- BUTTON -->
+    <div class="mt-6 flex justify-end gap-3">
+      <button onclick="window.print()"
+        class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700">
+        Cetak PDF
+      </button>
+    </div>
+
+  </div>
+
+  <!-- SCRIPT LOGIKA -->
+  <script>
+    function hitung(el) {
+      const row = el.closest("tr");
+
+      const standar = parseFloat(row.querySelector(".standar").value) || 0;
+      const pembacaan = parseFloat(row.querySelector(".pembacaan").value) || 0;
+      const toleransi = parseFloat(row.querySelector(".toleransi").value) || 0;
+
+      const deviasi = pembacaan - standar;
+      row.querySelector(".deviasi").value = deviasi.toFixed(2);
+
+      const keputusanEl = row.querySelector(".keputusan");
+
+      if (Math.abs(deviasi) <= toleransi && toleransi !== 0) {
+        keputusanEl.textContent = "LULUS";
+        keputusanEl.className = "keputusan font-semibold text-green-600";
+      } else if (toleransi !== 0) {
+        keputusanEl.textContent = "TIDAK LULUS";
+        keputusanEl.className = "keputusan font-semibold text-red-600";
+      } else {
+        keputusanEl.textContent = "";
+      }
+    }
+  </script>
+
+</body>
+</html>
